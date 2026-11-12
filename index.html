@@ -435,7 +435,7 @@
         <div>
           <p class="kicker">The official application</p>
           <h1>Minimum<br />Cut-Off to<br /><span class="slash">Date</span> Me</h1>
-          <p class="hero-sub">20 facial metrics. 5 marks each. 100 total. Score each one honestly against the ideal, <strong>set your cut-off</strong>, and take the verdict. Nothing else is being judged here.</p>
+          <p class="hero-sub">20 facial metrics. 5 marks each. 100 total. Score each one honestly against the ideal, <strong>set your cut-off</strong>, and take the verdict. Nothing else is being judged here. Not your personality. Yet.</p>
         </div>
         <figure class="diagram play" id="diagram" aria-hidden="true" title="Tap to rescan">
           <span class="rescan-hint">&#8635; Rescan</span>
@@ -505,10 +505,10 @@
               <div class="field" id="age-field">
                 <label for="f-age">Age</label>
                 <input id="f-age" type="number" min="1" max="99" placeholder="18" aria-describedby="age-error" />
-                <p class="field-error" id="age-error" role="alert">Error: 18+ only. Under 18 is not eligible to apply.</p>
+                <p class="field-error" id="age-error" role="alert">Error: 18+ only. Tf you are, a sperm? Under 18 is not eligible to apply.</p>
               </div>
             </div>
-            <p class="howto"><b>How to score:</b> 5 matches the ideal exactly. 3 is close enough. 0 is nowhere near. Score honestly, the sheet can tell.</p>
+            <p class="howto"><b>How to score:</b> 5 matches the ideal exactly. 3 is close enough. 0 is nowhere near. Score honestly, the sheet can tell. Inflated marks get caught, this is not a group project.</p>
           </section>
 
           <div id="groups"></div>
@@ -536,7 +536,7 @@
               <span class="co-val" id="cutoff-val">80 / 100</span>
             </div>
             <input type="range" id="cutoff-range" min="0" max="100" step="5" value="80" aria-label="Set your cut-off out of 100" />
-            <p class="co-note">Set it before you score. It does not move after the verdict.</p>
+            <p class="co-note">Set it before you score. No lowering it after you see the total, we saw that coming.</p>
           </div>
           <div class="breakdown" id="breakdown"></div>
           <div class="verdict" id="verdict">
@@ -554,7 +554,7 @@
       <footer>
         <span>Form DM-001</span>
         <span id="foot-cutoff">Cut-off: 80 / 100</span>
-        <span>Results are final. No appeals.</span>
+        <span>Results are final. No appeals. No crying in the corridor.</span>
         <span>Built by <a href="https://github.com/p3xz" target="_blank" rel="noopener">Namish Yadav</a></span>
       </footer>
     </div>
@@ -745,11 +745,11 @@
       }
 
       function verdictFor(total) {
-        if (total >= cutOff + 10) return { cls: "pass", stamp: "Cleared", title: "Distinction.", text: "Cleared your cut-off by " + (total - cutOff) + (total - cutOff === 1 ? " mark" : " marks") + ". Application accepted." };
-        if (total >= cutOff) return { cls: "pass", stamp: "Cleared", title: "Cut-off cleared.", text: "Above your cut-off of " + cutOff + ". Application accepted." };
-        if (total >= cutOff - 10) return { cls: "wait", stamp: "Waitlist", title: "Waitlisted.", text: "Only " + (cutOff - total) + (cutOff - total === 1 ? " mark" : " marks") + " short of your cut-off. One stronger section changes this." };
-        if (total >= 55) return { cls: "fail", stamp: "Rejected", title: "Below cut-off.", text: "Application rejected. Fair hearing, clear result." };
-        return { cls: "fail", stamp: "Rejected", title: "Not eligible.", text: "Well below your cut-off of " + cutOff + ". Application rejected." };
+        if (total >= cutOff + 10) return { cls: "pass", stamp: "Cleared", title: "Distinction.", text: "Cleared your cut-off by " + (total - cutOff) + (total - cutOff === 1 ? " mark" : " marks") + ". Suspiciously good face. We will allow it." };
+        if (total >= cutOff) return { cls: "pass", stamp: "Cleared", title: "Cut-off cleared.", text: "Above your cut-off of " + cutOff + ". Application accepted. Try to act normal about it." };
+        if (total >= cutOff - 10) return { cls: "wait", stamp: "Waitlist", title: "Waitlisted.", text: "Only " + (cutOff - total) + (cutOff - total === 1 ? " mark" : " marks") + " short of your cut-off. So close. Pray the jawline carries." };
+        if (total >= 55) return { cls: "fail", stamp: "Rejected", title: "Below cut-off.", text: "Application rejected. The face card declined. Fair hearing, clear result." };
+        return { cls: "fail", stamp: "Rejected", title: "Not eligible.", text: "Well below your cut-off of " + cutOff + ". Even the sheet felt bad marking this one." };
       }
 
       var prevGroupScores = GROUPS.map(function () { return 0; });
@@ -786,7 +786,7 @@
         if (ageInvalid) {
           verdict.classList.add("fail");
           vTitle.textContent = "Not eligible.";
-          vText.textContent = "Age is under 18. This form is 18+ only, fix the age to continue.";
+          vText.textContent = "Tf you are, a sperm? This form is 18+ only. Rejected before the exam even started, fix the age to continue.";
           var ageStamp = document.createElement("span");
           ageStamp.className = "stamp fail";
           ageStamp.textContent = "Rejected";
@@ -794,7 +794,7 @@
           copyBtn.disabled = true;
         } else if (t.marked < 20) {
           vTitle.textContent = "Verdict pending";
-          vText.textContent = (20 - t.marked) + (20 - t.marked === 1 ? " metric" : " metrics") + " left. The verdict unlocks when all 20 are scored.";
+          vText.textContent = (20 - t.marked) + (20 - t.marked === 1 ? " metric" : " metrics") + " left. No half-marked love stories, score all 20.";
           copyBtn.disabled = true;
         } else {
           var v = verdictFor(t.total);
@@ -823,6 +823,13 @@
         var raw = ageInput.value.trim();
         var val = raw === "" ? NaN : parseInt(raw, 10);
         ageInvalid = !isNaN(val) && val < 18;
+        if (!isNaN(val) && val < 0) {
+          ageError.textContent = "Error: Negative age? Tf you are, a sperm? You have not even been born yet.";
+        } else if (!isNaN(val) && val < 18 && val <= 12) {
+          ageError.textContent = "Error: 18+ only. Tf you are, a sperm? Go finish school first.";
+        } else {
+          ageError.textContent = "Error: 18+ only. Tf you are, a sperm? Under 18 is not eligible to apply.";
+        }
         ageField.classList.toggle("has-error", ageInvalid);
         ageError.classList.toggle("show", ageInvalid);
         ageInput.setAttribute("aria-invalid", ageInvalid ? "true" : "false");
@@ -849,7 +856,7 @@
         document.getElementById("f-age").value = "";
         checkAge(false);
         update();
-        showToast("Sheet reset. Fresh start.");
+        showToast("Sheet reset. Same face, second chance.");
         window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
       });
 
