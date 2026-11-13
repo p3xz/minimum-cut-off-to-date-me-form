@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="dark" />
+    <!-- LOADING PAGE: if JavaScript is off, never trap the user behind the loader -->
+    <noscript><style>#loader { display: none !important; } body.is-loading { overflow: auto !important; }</style></noscript>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwYTBhMGIiLz4KICA8ZWxsaXBzZSBjeD0iMzIiIGN5PSIzMiIgcng9IjE2IiByeT0iMjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2YyZjBlYSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPGxpbmUgeDE9IjkiIHkxPSIyNSIgeDI9IjU1IiB5Mj0iMjUiIHN0cm9rZT0iI2U4MzIzZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtZGFzaGFycmF5PSI1IDQiLz4KICA8bGluZSB4MT0iOSIgeTE9IjQwIiB4Mj0iNTUiIHkyPSI0MCIgc3Ryb2tlPSIjZTgzMjNmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1kYXNoYXJyYXk9IjUgNCIvPgo8L3N2Zz4K" />
     <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADpUlEQVR42u3dzZHTUBBFYVnFypMAxQ5WBEAE5ECU5DAREAAr2FFEwJoVVVTZcvlHll7f/s52xrLkd/r207MlHY7Hlwk4x+wjADlADpAD5AA5QA6QA+QAOUAOgBwgB8gBcoAcIAfIAXKAHCAH8I83PoLfv34u/entu/edP5lD20sTLjjBkqZy3OREc0sayfGgFg0VmZmx+9bIkWNGHz/C28o1Q3ihRzz4cnJUNeOmQV1xU+QY2oy7x7LbisjMjFVOUiKnIIHJsTROKxb3Bm8hOUqacWFrYfkxM4MfveYc20R9/DppjhxnS/bZ43d2+zHhMTODH+3aypaZn9pfEuQYs0wDwmOONGP7Uo5sLoFtZa+Qz2suteUYvzRLh0dacuxbvpbPxy3KEcbmdB/qhofrVhAnx5ixERYekgNZcowcG0nhITkQJEfdyX+5PU9IjjFXFwLWPGbFZ/9jk2PkAq0eHiakiJAj4+dVhY6idnKMn9ulO4u2gvpyJF0PUuVYCidHlcSu21m0FZADqXKM/zXsrZ2lxLRDcmCR1e7P8ePjp2v+7cP3b3e/9vj69bQWN3jfVV77f1T8+fxll32WHOjdViqeHFbcZ8kBcmDHCanz2LwDkRwgB/LkiOkpU8F1UskBcoAcIAfIAXKAHCDHeiQtcizt/8hLHZID5AA5QA6QA+QAOUAOkAPkADkAcoAcIAfIAXKAHCAHyAFygBxDkfQA36X9H/kn05ID5AA5QA6QA+QAOUCOVUla6nAfUkgOkAPkAMiBMDkyTlgq3sJKcoAcIAfayVF92lH0npmSA+RAKzmqdJa63xSWkaP6ja0rHou2glA5xk/s0hfaVJIjo7MUOgptBblyjJzb1S/eLCZH3sN4yNGxQKvHRkk5kh5XTg5Ijl1LcLQMz3h0oeRAnBwjh0fME08lBxLlGDM8kh6UnJYc+/oRsLaRI8f4RVl6STdwzrFX+YbFRoIcZ0tz+3E6+47VvwlKSI4xxyDg1yexp7JbhkdeQ4mSY8fmEtlQ0pJjFz+CzZg6rJA+z4/UbpIpx1LJPmMUl7aZdH1NWnJs40cHM6ZpOhyPL61ayYPj97wtS4791xgeiZBWZsQmxzUe3DScK26KHJVOVR6MmVQz8uV46jlnsBbJc44NRjHejKnPzwTXHcsOZnRpKyu2mCZaNJXjPktaOUGOqyzp6QQ5YEIKcoAcIAfIAXKAHCAHyAGQA+QAOUAOkAPkADlADpAD5AA5gFP+AmmHWjwRO3SbAAAAAElFTkSuQmCC" />
     <title>Minimum Cut-Off to Date Me | Hall Ticket</title>
@@ -61,6 +63,90 @@
       ::selection { background: var(--red); color: #fff; }
 
       .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 120px; }
+
+      /* ============================================================
+         LOADING PAGE: edit this block to change the loader
+         Full-screen overlay, exam-hall / paper style.
+         Shows for about 1.2s, then fades out with transform + opacity only.
+         A CSS fail-safe hides it after 3.2s even if JavaScript never runs,
+         and the JS right after the loader markup hides it sooner.
+         ============================================================ */
+      body.is-loading { overflow: hidden; }
+      #loader {
+        position: fixed; inset: 0; z-index: 200;
+        min-height: 100dvh; height: 100dvh;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--bg); color: var(--text);
+        padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+        touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+        /* Fail-safe: auto fade if JS is slow or blocked */
+        animation: loaderFailsafeHide 0.4s ease 3.2s forwards;
+      }
+      #loader.loader-done {
+        opacity: 0; transform: translateY(-10px) scale(0.99);
+        pointer-events: none;
+        transition: opacity 0.45s ease, transform 0.45s ease;
+        animation: none;
+      }
+      #loader.loader-instant { transition: none !important; animation: none !important; }
+      @keyframes loaderFailsafeHide { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+      .loader-card {
+        width: 100%; max-width: 430px; min-width: 0;
+        background: var(--paper); color: var(--ink);
+        border-radius: 6px; box-shadow: 0 30px 60px rgba(0,0,0,0.55);
+        padding: clamp(22px, 6vw, 34px) clamp(18px, 5vw, 32px) clamp(20px, 5vw, 28px);
+        text-align: center; position: relative; overflow: hidden;
+      }
+      .loader-card::before {
+        content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--red);
+      }
+      .loader-form-no {
+        font-family: "Space Mono", monospace; font-size: clamp(0.7rem, 3.2vw, 0.78rem);
+        letter-spacing: 0.22em; text-transform: uppercase; color: var(--red-dark); margin: 0 0 10px; font-weight: 700;
+      }
+      .loader-title {
+        font-family: "Bodoni Moda", "Didot", Georgia, serif; font-weight: 800; text-transform: uppercase;
+        font-size: clamp(1.85rem, 8.5vw, 2.75rem); line-height: 1.04; margin: 0; letter-spacing: 0.01em;
+      }
+      .loader-rule { border: none; border-top: 3px double var(--ink); margin: 16px 0 14px; }
+      .loader-line {
+        font-family: "Jost", "Futura", system-ui, sans-serif; font-size: clamp(1rem, 4.2vw, 1.05rem);
+        color: var(--ink-soft); line-height: 1.5; margin: 0 0 18px; min-height: 1.5em;
+      }
+      .loader-line .loader-dots::after { content: ""; animation: loaderDots 1s steps(4, end) infinite; }
+      @keyframes loaderDots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+      /* Progress bar that fills: change the 1.1s duration to make it faster or slower */
+      .loader-bar {
+        height: 12px; border: 1.5px solid var(--ink); border-radius: 999px;
+        background: var(--paper-2); overflow: hidden; text-align: left;
+      }
+      .loader-bar-fill {
+        height: 100%; width: 0%; background: var(--red); border-radius: 999px;
+        animation: loaderFill 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+      @keyframes loaderFill { from { width: 0%; } to { width: 100%; } }
+      .loader-meta {
+        display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+        font-family: "Space Mono", monospace; font-size: clamp(0.65rem, 2.8vw, 0.72rem);
+        letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-top: 12px;
+      }
+      .loader-stamp {
+        display: inline-block; margin-top: 18px; transform: rotate(-6deg);
+        font-family: "Space Mono", monospace; font-weight: 700; font-size: clamp(0.7rem, 3vw, 0.8rem);
+        letter-spacing: 0.16em; text-transform: uppercase; color: var(--red-dark);
+        border: 2.5px solid var(--red); border-radius: 5px; padding: 6px 12px;
+        animation: loaderStampIn 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) 0.55s both;
+      }
+      @keyframes loaderStampIn { from { opacity: 0; transform: rotate(6deg) scale(1.8); } to { opacity: 1; transform: rotate(-6deg) scale(1); } }
+      @media (max-width: 360px) {
+        .loader-card { padding: 22px 16px 20px; }
+        .loader-meta { justify-content: center; text-align: center; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #loader { animation: none; }
+        .loader-bar-fill, .loader-stamp, .loader-line .loader-dots::after { animation: none !important; }
+        .loader-bar-fill { width: 100%; }
+      }
 
       /* ---------- Top strip ---------- */
       .topstrip {
@@ -606,7 +692,7 @@
         body { background: #fff; }
         *, *::before, *::after { animation: none !important; }
         .diagram .scan, .rescan-hint { display: none !important; }
-        .topstrip, .hero, .stats, .scorecard, .mobilebar, footer, .toast { display: none !important; }
+        #loader, .topstrip, .hero, .stats, .scorecard, .mobilebar, footer, .toast { display: none !important; }
         .layout { display: block; }
         .sheet { box-shadow: none; }
         .print-note { display: block !important; font-family: "Space Mono", monospace; font-size: 12px; text-align: center; margin-bottom: 14px; color: #000; }
@@ -618,7 +704,59 @@
     <!-- canvas-confetti (cdnjs): paper-coloured celebration burst for a passing verdict -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
   </head>
-  <body>
+  <body class="is-loading">
+    <!-- ============================================================
+         LOADING PAGE: edit this block to change the loader copy
+         Keep the ids (#loader, .loader-bar-fill) or the JS below breaks.
+         The loader hides itself in about 1.2s via the script right
+         below this block (search for "LOADING PAGE" there).
+         ============================================================ -->
+    <div id="loader" role="status" aria-live="polite" aria-label="Loading. Printing your exam paper">
+      <div class="loader-card">
+        <p class="loader-form-no">Form DM-001</p>
+        <p class="loader-title">Minimum Cut-Off to Date Me</p>
+        <hr class="loader-rule" />
+        <p class="loader-line">Printing your exam paper<span class="loader-dots" aria-hidden="true"></span></p>
+        <div class="loader-bar" aria-hidden="true"><div class="loader-bar-fill"></div></div>
+        <div class="loader-meta"><span>Serial No. 001</span><span>Please wait</span></div>
+        <span class="loader-stamp">Loading</span>
+      </div>
+    </div>
+    <script>
+      /* ============================================================
+         LOADING PAGE: timing and hide logic (edit durations here)
+         Normal: hides after about 1.25s with a fade (transform + opacity).
+         Reduced motion: hides almost instantly with no animation.
+         Fail-safe: a second timer at 2.6s hides it no matter what,
+         plus the CSS fail-safe at 3.2s if this script never runs.
+         ============================================================ */
+      (function () {
+        var loader = document.getElementById("loader");
+        if (!loader) { document.body.classList.remove("is-loading"); return; }
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var hidden = false;
+        function hideLoader(instant) {
+          if (hidden) return;
+          hidden = true;
+          if (instant) loader.classList.add("loader-instant");
+          loader.classList.add("loader-done");
+          loader.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("is-loading");
+          setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, instant ? 50 : 520);
+        }
+        if (reduce) {
+          setTimeout(function () { hideLoader(true); }, 120);
+        } else {
+          setTimeout(function () { hideLoader(false); }, 1250);
+        }
+        /* Fail-safe timeout: the loader always hides, even if something above fails */
+        setTimeout(function () { hideLoader(reduce); }, 2600);
+        window.addEventListener("load", function () {
+          /* If the page finished loading early, do not cut the loader short.
+             The timers above already give a snappy 1 to 1.5s total. */
+        });
+      })();
+    </script>
     <div class="wrap">
       <div class="topstrip">
         <span>Form No. DM-001</span>
