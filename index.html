@@ -45,15 +45,19 @@
         --radius: 14px;
       }
       * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; }
+      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: hidden; }
+      @supports (overflow-x: clip) { html, body { overflow-x: clip; } }
       body {
         margin: 0;
+        overflow-x: hidden;
+        touch-action: manipulation;
         background: var(--bg);
         color: var(--text);
         font-family: "Jost", "Futura", system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
       }
       button { font-family: inherit; cursor: pointer; }
+      button, a, input, label, .diagram { touch-action: manipulation; }
       ::selection { background: var(--red); color: #fff; }
 
       .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 120px; }
@@ -150,7 +154,7 @@
 
       /* ---------- Stats strip ---------- */
       .stats {
-        display: grid; grid-template-columns: repeat(4, 1fr);
+        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
         border: 1px solid var(--line-dark); border-radius: var(--radius); overflow: hidden;
         margin-bottom: 34px; background: var(--bg-panel);
         animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both;
@@ -166,6 +170,7 @@
 
       /* ---------- Paper sheet ---------- */
       .sheet {
+        min-width: 0;
         background: var(--paper); color: var(--ink); border-radius: 6px;
         box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         padding: 30px 30px 26px;
@@ -239,10 +244,11 @@
       .group-head .subtotal b.bump { display: inline-block; animation: bump 0.35s ease; }
       @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.32); } 100% { transform: scale(1); } }
       .group-head {
-        display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
         background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 4px;
       }
-      .group-head .subtotal { font-family: "Space Mono", monospace; font-size: 12px; white-space: nowrap; }
+      .group-head h3 { min-width: 0; }
+      .group-head .subtotal { font-family: "Space Mono", monospace; font-size: 12px; white-space: nowrap; min-width: 0; }
       .group-head .subtotal b { color: #ffb3b9; }
 
       .metric {
@@ -291,7 +297,7 @@
       .sheet-total .t-lbl { font-family: "Bodoni Moda", "Didot", Georgia, serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; font-size: 17px; }
       .sheet-total .t-val { font-family: "Space Mono", monospace; font-weight: 700; font-size: 22px; }
       .sheet-total .t-val span { border-bottom: 2px solid var(--ink); padding: 0 14px; }
-      .sheet-sign { display: flex; justify-content: space-between; gap: 16px; margin-top: 26px; font-size: 12px; color: var(--ink-soft); }
+      .sheet-sign { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 26px; font-size: 12px; color: var(--ink-soft); }
       .sheet-sign .sig { border-top: 1.5px solid var(--ink); padding-top: 6px; min-width: 150px; font-family: "Space Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
 
       /* ---------- Scorecard ---------- */
@@ -473,16 +479,18 @@
 
       /* ---------- Responsive ---------- */
       @media (max-width: 900px) {
-        .hero { grid-template-columns: 1fr; gap: 22px; padding-top: 30px; }
+        .hero { grid-template-columns: minmax(0, 1fr); gap: 22px; padding-top: 30px; }
         .diagram { max-width: 340px; }
-        .layout { grid-template-columns: 1fr; }
+        .layout { grid-template-columns: minmax(0, 1fr); }
         .scorecard { position: static; }
         .mobilebar { display: flex; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .group-head .subtotal { white-space: normal; text-align: right; }
+        .sheet-sign .sig { flex: 1 1 140px; min-width: 0; }
         .stat:nth-child(2) { border-right: none; }
         .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--line-dark); }
         .sheet { padding: 22px 16px 20px; }
-        .fields { grid-template-columns: 1fr; }
+        .fields { grid-template-columns: minmax(0, 1fr); }
         .metric { grid-template-columns: 34px minmax(0, 1fr); }
         .m-ideal { grid-column: 2; justify-self: start; margin-top: 8px; }
         .score-row { grid-column: 1 / 3; }
