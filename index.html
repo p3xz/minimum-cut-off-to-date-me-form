@@ -131,13 +131,15 @@
       .diagram .feat-draw { stroke-dasharray: 100; stroke-dashoffset: 0; }
       .diagram.play .feat-draw { animation: drawIn 0.55s ease-out both; animation-delay: var(--d, 1.15s); }
       @keyframes drawIn { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
-      .diagram .gh { transform-box: fill-box; transform-origin: left center; }
-      .diagram.play .gh { animation: wipeX 0.7s cubic-bezier(0.22, 1, 0.36, 1) both, dashMarch 1.4s linear infinite; animation-delay: var(--d, 0.6s), 0s; }
-      @keyframes wipeX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-      @keyframes dashMarch { to { stroke-dashoffset: -18; } }
-      .diagram .gv { transform-box: fill-box; transform-origin: center top; }
-      .diagram.play .gv { animation: dropY 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0.45s); }
-      @keyframes dropY { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+      /* Guide lines (thirds + fifths) draw in on load: solid dash sweeps in via
+         stroke-dashoffset, then settles back to the dashed guide pattern. */
+      .diagram.play .gh { animation: drawGuideH 0.8s ease-out both; animation-delay: var(--d, 0.6s); }
+      @keyframes drawGuideH { 0% { stroke-dasharray: 100; stroke-dashoffset: 100; } 85% { stroke-dasharray: 100; stroke-dashoffset: 0; } 100% { stroke-dasharray: 5 4; stroke-dashoffset: 0; } }
+      .diagram.play .gv { animation: drawGuideV 0.8s ease-out both; animation-delay: var(--d, 0.45s); }
+      @keyframes drawGuideV { 0% { stroke-dasharray: 100; stroke-dashoffset: 100; } 85% { stroke-dasharray: 100; stroke-dashoffset: 0; } 100% { stroke-dasharray: 3 4; stroke-dashoffset: 0; } }
+      /* Rescan sweep: one thin scan line travels top to bottom over ~2s. */
+      .diagram.scanning .scan { animation: scanSweep 2s linear both; }
+      @keyframes scanSweep { from { transform: translateY(30px); } to { transform: translateY(272px); } }
       .diagram .eye { transform-box: fill-box; transform-origin: center; animation: blink 4.8s ease-in-out 2.4s infinite; }
       .diagram.play .eye { animation: eyeIn 0.4s ease-out 1.1s both, blink 4.8s ease-in-out 2.4s infinite; }
       @keyframes eyeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -273,20 +275,23 @@
         background: var(--paper-2);
       }
       .m-ideal small { display: block; font-weight: 400; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); text-align: center; margin-bottom: 1px; }
-      .score-row { grid-column: 2 / 4; display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+      /* Score buttons: one 6-column grid row at every width, 6px gap, 44px targets. */
+      .score-row { grid-column: 2 / 4; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-top: 10px; align-items: stretch; }
+      .score-row .lbl { grid-column: 1 / -1; }
+      .score-row .score-of { grid-column: 1 / -1; }
       .score-row .lbl { font-family: "Space Mono", monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-right: 2px; }
       .score-btn {
-        width: 42px; height: 42px; min-height: 42px; border-radius: 8px;
+        width: auto; height: 44px; min-height: 44px; border-radius: 8px; touch-action: manipulation;
         border: 1.5px solid var(--ink); background: transparent; color: var(--ink);
         font-family: "Space Mono", monospace; font-size: 15px; font-weight: 700;
         display: inline-flex; align-items: center; justify-content: center;
         transition: background 0.12s ease, color 0.12s ease, transform 0.08s ease;
       }
-      .score-btn:hover { border-color: var(--red); color: var(--red-dark); }
-      .score-btn:active { transform: scale(0.93); }
+      @media (hover: hover) { .score-btn:hover { border-color: var(--red); color: var(--red-dark); } }
+      .score-btn:active { transform: scale(0.9); }
       .score-btn.sel { background: var(--ink); color: var(--paper); border-color: var(--ink); animation: btnPop 0.28s ease; }
       .score-btn.sel.five { background: var(--red); border-color: var(--red); color: #fff; }
-      @keyframes btnPop { 0% { transform: scale(0.82); } 55% { transform: scale(1.12); } 100% { transform: scale(1); } }
+      @keyframes btnPop { 0% { transform: scale(1); } 45% { transform: scale(1.25); } 100% { transform: scale(1); } }
       .score-btn:focus-visible, .btn:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
       .score-of { font-family: "Space Mono", monospace; font-size: 12px; color: var(--ink-soft); margin-left: 2px; }
 
@@ -313,7 +318,7 @@
       .sc-marked { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
       .sc-marked b { color: var(--text); }
       .bar { position: relative; height: 12px; background: var(--bg-panel-2); border-radius: 999px; border: 1px solid var(--line-dark); }
-      .bar-fill { height: 100%; width: 0%; background: var(--red); border-radius: 999px; transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+      .bar-fill { height: 100%; width: 0%; background: var(--red); border-radius: 999px; transition: width 0.6s ease-out; }
       .bar-tick { position: absolute; top: -5px; bottom: -5px; left: 80%; width: 2px; background: var(--text); }
       .tick-label {
         position: absolute; top: -19px; right: -6px;
@@ -360,10 +365,10 @@
       }
       .btn:active { transform: scale(0.98); }
       .btn-red { background: var(--red); color: #fff; }
-      .btn-red:hover { background: var(--red-dark); }
+      @media (hover: hover) { .btn-red:hover { background: var(--red-dark); } }
       .btn-red:disabled { background: var(--bg-panel-2); color: var(--muted); cursor: not-allowed; }
       .btn-ghost { background: transparent; color: var(--text); border-color: var(--line-dark); }
-      .btn-ghost:hover { border-color: var(--muted); }
+      @media (hover: hover) { .btn-ghost:hover { border-color: var(--muted); } }
       .sc-note { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 14px 0 0; text-align: center; }
 
       /* ---------- Mobile sticky bar ---------- */
@@ -393,7 +398,7 @@
 
       footer { margin-top: 40px; border-top: 1px solid var(--line-dark); padding-top: 18px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
       footer a { color: var(--text); text-decoration: none; border-bottom: 1.5px solid var(--red); padding-bottom: 1px; transition: color 0.2s ease; }
-      footer a:hover { color: var(--red); }
+      @media (hover: hover) { footer a:hover { color: var(--red); } }
 
 
       .tagline { font-style: italic; color: var(--ink-soft); text-align: center; font-size: 13.5px; margin: 8px 0 0; }
@@ -402,7 +407,8 @@
       .instructions p { margin:0 0 6px; } .instructions p:last-child { margin:0; }
       .group-sub { font-size:12.5px; font-style:italic; color:var(--ink-soft); margin:8px 2px 0; line-height:1.45; }
       .m-joke { font-size:12.5px; font-style:italic; color:#7a7260; line-height:1.45; margin-top:3px; }
-      .score-cap { grid-column:2/4; font-size:12px; font-style:italic; color:var(--red-dark); min-height:0; margin-top:2px; }
+      .score-cap { grid-column:2/4; font-size:12px; font-style:italic; color:var(--red-dark); min-height:0; margin-top:2px; opacity:0; transform:translateY(3px); transition:opacity .3s ease, transform .3s ease; }
+      .score-cap.show { opacity:1; transform:translateY(0); }
       .reaction-line { font-size:13.5px; font-style:italic; color:var(--text); line-height:1.5; margin:0 0 14px; }
       .examiner-line, .rank-line, .category-line { font-size:13px; color:var(--muted); line-height:1.55; margin:0 0 10px; }
       .examiner-line i { font-family: Georgia, serif; }
@@ -413,7 +419,7 @@
       .personality-box p { margin:0; font-size:13px; color:var(--muted); line-height:1.55; }
       .share-label { font-size:12px; color:var(--muted); text-align:center; margin:0; line-height:1.5; }
       .btn-share { background:var(--paper); color:var(--ink); }
-      .btn-share:hover { background:var(--paper-2); }
+      @media (hover: hover) { .btn-share:hover { background:var(--paper-2); } }
       .btn-share:disabled { background:var(--bg-panel-2); color:var(--muted); cursor:not-allowed; }
       .lowered-note { display:none; font-size:12px; color:var(--amber); line-height:1.5; margin:6px 0 0; }
       .lowered-note.show { display:block; }
@@ -477,6 +483,86 @@
       .notfound h2 { font-family:"Bodoni Moda",Georgia,serif; font-size:34px; margin:0 0 10px; }
       .notfound p { color:var(--muted); margin:0 0 20px; }
 
+
+      /* ============ Added: animations + mobile support pack ============ */
+      /* Tap + focus hygiene (Part 2.11) and fluid media (Part 2.6) */
+      * { -webkit-tap-highlight-color: transparent; }
+      img, svg, canvas { max-width: 100%; }
+      input, select, textarea { font-size: 16px; }
+      :focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+      .sc-big .num { font-size: clamp(3rem, 14vw, 4.75rem); }
+      .sheet-title { font-size: clamp(1.4rem, 6vw, 2rem); }
+
+      /* Verdict stamp slam (Part 1.1): 3x -> overshoot -> -6deg rest, ~0.5s */
+      .stamp { transform: rotate(-6deg); animation: stampSlam 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+      @keyframes stampSlam {
+        0% { opacity: 0; transform: rotate(10deg) scale(3); }
+        70% { opacity: 1; transform: rotate(-8deg) scale(0.92); }
+        100% { opacity: 0.92; transform: rotate(-6deg) scale(1); }
+      }
+      /* Result card thud right after the stamp lands (Part 1.1) */
+      .verdict.thud { animation: thudShake 0.25s ease; }
+      @keyframes thudShake { 0% { transform: translateY(0); } 30% { transform: translateY(3px); } 55% { transform: translateY(-2px); } 100% { transform: translateY(0); } }
+
+      /* Per-section progress bars (Part 1.3): width transition 0.6s ease-out */
+      .group-bar { height: 8px; background: var(--paper-2); border: 1px solid var(--line-paper); border-radius: 999px; overflow: hidden; margin-top: 10px; }
+      .group-bar-fill { height: 100%; width: 0%; background: var(--red); border-radius: 999px; transition: width 0.6s ease-out; }
+
+      /* Scroll reveal for metric rows (Part 1.7): JS adds .reveal-init only when
+         IntersectionObserver exists and motion is allowed, so content is never
+         hidden waiting on a trigger. */
+      .metric.reveal-init { opacity: 0; transform: translateY(14px); }
+      .metric.revealed { opacity: 1; transform: translateY(0); transition: opacity 0.45s ease, transform 0.45s ease; }
+
+      /* Cut-off number reactions (Part 1.6): shake above 95, red flash when lowered */
+      .cutoff-ctl .co-val { border-radius: 6px; padding: 2px 6px; transition: background-color 0.2s ease, color 0.2s ease; }
+      .co-val.shake { animation: shakeX 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+      .co-val.flash-red { background: var(--red); color: #fff !important; }
+
+      /* Falling "0" glyphs behind the result card (Part 1.9) */
+      .scorecard { isolation: isolate; }
+      .zero-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; border-radius: var(--radius); }
+      .zero-layer span { position: absolute; top: -44px; font-family: "Space Mono", monospace; font-weight: 700; color: var(--muted); opacity: 0; animation: zeroFall 2s linear forwards; }
+      @keyframes zeroFall { 0% { opacity: 0; transform: translateY(0); } 15% { opacity: 0.65; } 100% { opacity: 0; transform: translateY(360px); } }
+
+      /* Rescan button under Fig. 1 (Part 1.5) */
+      .btn-rescan {
+        display: block; margin: 10px auto 4px; min-height: 44px; padding: 10px 22px;
+        background: transparent; color: var(--text); border: 1.5px solid var(--line-dark);
+        border-radius: 999px; font-family: "Space Mono", monospace; font-size: 12px;
+        letter-spacing: 0.14em; text-transform: uppercase; touch-action: manipulation;
+      }
+      @media (hover: hover) { .btn-rescan:hover { border-color: var(--red); color: var(--red); } }
+
+      /* Sticky bar separators + dvh overlays (Parts 2.4 + 2.9) */
+      .mobilebar .mb-meta b { color: var(--text); font-family: "Space Mono", monospace; font-weight: 700; }
+      .modal-backdrop, .notfound { min-height: 100dvh; }
+
+      /* Credits page: a separate full-screen view opened from the footer. */
+      .credits-view {
+        display: none; position: fixed; inset: 0; z-index: 85; overflow-y: auto;
+        min-height: 100dvh; background: var(--bg); padding: 28px 18px calc(28px + env(safe-area-inset-bottom));
+      }
+      .credits-view.open { display: block; }
+      .credits-card { max-width: 560px; margin: 0 auto; background: var(--bg-panel); border: 1px solid var(--line-dark); border-radius: 16px; padding: 28px 24px; }
+      .credits-card h2 { font-family: "Bodoni Moda", Georgia, serif; font-size: clamp(1.8rem, 7vw, 2.6rem); margin: 8px 0 10px; line-height: 1.1; }
+      .credits-card p { color: var(--muted); line-height: 1.6; font-size: 15px; }
+      .social-list { list-style: none; margin: 20px 0; padding: 0; display: grid; gap: 10px; }
+      .social-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 1px solid var(--line-dark); border-radius: 10px; padding: 12px 14px; min-height: 52px; }
+      .social-list .s-name { font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+      .social-list a { color: var(--text); font-weight: 700; font-size: 16px; text-decoration: none; border-bottom: 2px solid var(--red); padding-bottom: 1px; }
+      .test-checklist { border: 1.5px dashed var(--line-dark); border-radius: 10px; padding: 14px 16px; margin: 20px 0; }
+      .test-checklist summary { cursor: pointer; font-weight: 700; font-size: 14.5px; min-height: 32px; }
+      .test-checklist h4 { margin: 14px 0 6px; font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); }
+      .test-checklist ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+      .test-checklist li { font-size: 13.5px; color: var(--muted); line-height: 1.5; padding-left: 20px; position: relative; }
+      .test-checklist li::before { content: ""; position: absolute; left: 0; top: 7px; width: 8px; height: 8px; border: 1.5px solid var(--red); border-radius: 2px; }
+      @media (max-width: 640px) {
+        .layout, .hero, .stats, .fields { grid-template-columns: minmax(0, 1fr); }
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .sc-actions .btn { width: 100%; min-height: 48px; }
+      }
+
       /* ---------- Responsive ---------- */
       @media (max-width: 900px) {
         .hero { grid-template-columns: minmax(0, 1fr); gap: 22px; padding-top: 30px; }
@@ -494,7 +580,7 @@
         .metric { grid-template-columns: 34px minmax(0, 1fr); }
         .m-ideal { grid-column: 2; justify-self: start; margin-top: 8px; }
         .score-row { grid-column: 1 / 3; }
-        .score-btn { width: 44px; height: 44px; }
+        .score-btn { width: auto; height: 48px; min-height: 48px; }
         .wrap { padding-bottom: 130px; }
         .sc-actions .btn, .modal-actions .btn { min-height: 52px; font-size: 15px; }
         .share-card { transform-origin: top left; }
@@ -529,6 +615,8 @@
       }
     </style>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- canvas-confetti (cdnjs): paper-coloured celebration burst for a passing verdict -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -554,12 +642,12 @@
               </linearGradient>
               <clipPath id="faceClip"><ellipse cx="130" cy="150" rx="86" ry="118"/></clipPath>
             </defs>
-            <line class="gv" style="--d:0.45s" x1="78" y1="32" x2="78" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
-            <line class="gv" style="--d:0.55s" x1="113" y1="32" x2="113" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
-            <line class="gv" style="--d:0.65s" x1="147" y1="32" x2="147" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
-            <line class="gv" style="--d:0.75s" x1="182" y1="32" x2="182" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
-            <line class="gh" style="--d:0.7s" x1="44" y1="89" x2="216" y2="89" stroke="#e8323f" stroke-width="1.4" stroke-dasharray="5 4"/>
-            <line class="gh" style="--d:0.85s" x1="44" y1="168" x2="216" y2="168" stroke="#e8323f" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <line class="gv" pathLength="100" style="--d:0.45s" x1="78" y1="32" x2="78" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
+            <line class="gv" pathLength="100" style="--d:0.55s" x1="113" y1="32" x2="113" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
+            <line class="gv" pathLength="100" style="--d:0.65s" x1="147" y1="32" x2="147" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
+            <line class="gv" pathLength="100" style="--d:0.75s" x1="182" y1="32" x2="182" y2="268" stroke="#a09cae" stroke-width="1" stroke-dasharray="3 4"/>
+            <line class="gh" pathLength="100" style="--d:0.7s" x1="44" y1="89" x2="216" y2="89" stroke="#e8323f" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <line class="gh" pathLength="100" style="--d:0.85s" x1="44" y1="168" x2="216" y2="168" stroke="#e8323f" stroke-width="1.4" stroke-dasharray="5 4"/>
             <ellipse class="face" pathLength="100" cx="130" cy="150" rx="86" ry="118" fill="none" stroke="#f2f0ea" stroke-width="2"/>
             <g class="scan" clip-path="url(#faceClip)">
               <rect x="44" y="-36" width="172" height="36" fill="url(#scanGrad)"/>
@@ -580,6 +668,8 @@
             <text class="frac" style="--d:1.6s" x="222" y="238" fill="#e8323f" font-family="Space Mono, monospace" font-size="10">1/3</text>
           </svg>
           <figcaption>Fig. 1: Thirds and fifths decide everything</figcaption>
+          <!-- Rescan: replays the draw-in and sweeps the scan line over the figure -->
+          <button type="button" class="btn-rescan" id="btn-rescan" aria-label="Rescan the face diagram">&#8635; Rescan</button>
         </figure>
       </header>
 
@@ -634,6 +724,7 @@
         </form>
 
         <aside class="scorecard" id="scorecard" aria-label="Live scorecard">
+          <div class="zero-layer" id="zero-layer" aria-hidden="true"></div>
           <p class="sc-lbl">Total score</p>
           <div class="sc-big"><span class="num" id="sc-num">0</span><span class="of">/ 100</span></div>
           <p class="sc-marked" id="sc-marked"><b>0</b> of 20 metrics marked</p>
@@ -676,7 +767,7 @@
         <span>Form DM-001</span>
         <span id="foot-cutoff">Cut-off: 80 / 100</span>
         <span>Results are final. No appeals. No crying in the corridor. Also no sending this to your ex.</span>
-        <span>Built by <a href="https://github.com/p3xz" target="_blank" rel="noopener" id="foot-name" title="Complaints may be submitted to the nearest mirror.">Namish Yadav</a>. Complaints may be submitted to the nearest mirror.</span>
+        <span>Built by <a href="https://github.com/p3xz" target="_blank" rel="noopener" id="foot-name" title="Complaints may be submitted to the nearest mirror.">Namish Yadav</a>. Complaints may be submitted to the nearest mirror. <a href="#credits" id="foot-credits">Full credits</a></span>
         <span class="footer-lines">Disclaimer: Made for fun. Real attraction is 40% face, 60% how you treat the waiter. Nobody measured that.</span>
       </footer>
     </div>
@@ -684,7 +775,7 @@
     <div class="mobilebar" aria-hidden="false">
       <div>
         <div class="mb-score"><span id="mb-num">0</span> <small>/ 100</small></div>
-        <div class="mb-meta" id="mb-meta">0 of 20 marked</div>
+        <div class="mb-meta">Cut-off <b id="mb-cutoff">80</b> | <span id="mb-meta">0 of 20 marked</span></div>
       </div>
       <a href="#scorecard">See verdict</a>
     </div>
@@ -709,6 +800,43 @@
     </div>
     <div id="share-card-wrap" aria-hidden="true"><div class="share-card" id="share-card"><div class="wm" id="sc-wm"></div><div class="sc-inner" id="sc-inner"></div></div></div>
     <div class="notfound" id="notfound"><div><h2>404: Page not found. Like your jawline in profile pics.</h2><p>The page you wanted is not in this exam hall.</p><button type="button" class="btn btn-red" id="btn-404" style="max-width:280px;margin:0 auto">Return to exam hall</button></div></div>
+
+    <!-- ============ Credits page (separate view, opened via #credits) ============ -->
+    <div class="credits-view" id="credits-view" role="dialog" aria-modal="true" aria-labelledby="credits-title">
+      <div class="credits-card">
+        <p class="sc-lbl">Form DM-001 · Credits</p>
+        <h2 id="credits-title">Built by Namish Yadav</h2>
+        <p>Minimum Cut-Off to Date Me was designed, written and shipped by Namish Yadav. One static page, no servers were consulted, no faces were uploaded. Complaints may be submitted to the nearest mirror.</p>
+        <ul class="social-list">
+          <li><span class="s-name">Instagram</span><a href="https://www.instagram.com/nam7sh/" target="_blank" rel="noopener" aria-label="Namish Yadav on Instagram, at nam7sh">@nam7sh</a></li>
+          <li><span class="s-name">GitHub</span><a href="https://github.com/p3xz" target="_blank" rel="noopener" aria-label="Namish Yadav on GitHub, p3xz">p3xz</a></li>
+          <li><span class="s-name">X</span><a href="https://x.com/NamishYadavv" target="_blank" rel="noopener" aria-label="Namish Yadav on X, at NamishYadavv">@NamishYadavv</a></li>
+        </ul>
+        <!-- Test checklist: iPhone Safari + Android Chrome -->
+        <details class="test-checklist">
+          <summary>Test checklist: iPhone Safari and Android Chrome</summary>
+          <h4>iPhone Safari</h4>
+          <ul>
+            <li>Open at 360 to 430px wide: no sideways scroll, title and sheet fit the screen.</li>
+            <li>Tap any input: the page does not zoom in on focus (inputs are 16px).</li>
+            <li>Score buttons sit in one row of 6, at least 44px tall, and the picked one pops with its caption fading in below.</li>
+            <li>Sticky bottom bar always shows Total / 100, the cut-off and how many of 20 are marked, and never covers the footer.</li>
+            <li>Finish all 20: the verdict stamp slams in, the phone vibrates once, and Copy result opens the share sheet.</li>
+            <li>Turn on Reduce Motion in Settings: animations stop, no confetti, no vibration, final scores show instantly.</li>
+          </ul>
+          <h4>Android Chrome</h4>
+          <ul>
+            <li>Rapid-tap the score buttons: no double-tap zoom, the selected button pops to 1.25 and settles.</li>
+            <li>Scroll slowly: each metric row fades and slides up 14px once as it enters the screen.</li>
+            <li>Set the cut-off above 95: the number shakes. Lower it after a full score: it flashes red with the grace-marks warning.</li>
+            <li>Score at or above the cut-off: paper-coloured confetti bursts. Score 15 or more below: zeros fall behind the result card.</li>
+            <li>Tap Rescan under Fig. 1: the scan line sweeps top to bottom in about 2 seconds.</li>
+            <li>Share result: the marksheet preview opens, Share sends the PNG, Download PNG saves it under 1.5 MB.</li>
+          </ul>
+        </details>
+        <button type="button" class="btn btn-red" id="btn-credits-close" aria-label="Close credits and return to the form">Return to exam hall</button>
+      </div>
+    </div>
     <div class="toast" id="toast" role="status"></div>
 
     <script>
@@ -753,6 +881,7 @@
       var groupsEl = document.getElementById("groups");
       var breakdownEl = document.getElementById("breakdown");
       var groupSubEl = [];
+      var groupBarEl = [];
       var bdValEl = [];
 
       GROUPS.forEach(function (group, gi) {
@@ -766,6 +895,14 @@
         sec.appendChild(head);
         if (group.sub) { var gsub = document.createElement("p"); gsub.className = "group-sub"; gsub.textContent = group.sub; sec.appendChild(gsub); }
         groupSubEl.push(head.querySelector(".subtotal b"));
+        // Per-section progress bar (Part 1.3): fills via 0.6s ease-out width transition.
+        var gbar = document.createElement("div");
+        gbar.className = "group-bar";
+        var gfill = document.createElement("div");
+        gfill.className = "group-bar-fill";
+        gbar.appendChild(gfill);
+        sec.appendChild(gbar);
+        groupBarEl.push(gfill);
 
         group.metrics.forEach(function (m) {
           metricIndex += 1;
@@ -852,10 +989,10 @@
       var animFrame = null;
       var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      var SCORE_CAPS = ["Nowhere near. Brave of you to be honest.", "Exists. Technically.", "Mirror says \u2018hmm\u2019.", "Close enough. Like Indian punctuality.", "Parents would call this \u2018handsome/beautiful\u2019.", "Matches the ideal. Examiner is suspicious."];
+      var SCORE_CAPS = ["Nowhere near. Brave of you to be honest.", "Exists. Technically.", "Mirror says hmm.", "Close enough. Like Indian punctuality.", "Parents would call this handsome or beautiful.", "Matches the ideal. Examiner is suspicious."];
       function setScore(idx, val, row, srow) {
         scores[idx] = val;
-        if (row._cap) row._cap.textContent = SCORE_CAPS[val];
+        if (row._cap) { row._cap.textContent = SCORE_CAPS[val]; row._cap.classList.remove("show"); void row._cap.offsetWidth; row._cap.classList.add("show"); }
         row.classList.add("done");
         var btns = srow.querySelectorAll(".score-btn");
         btns.forEach(function (b, i) {
@@ -888,7 +1025,7 @@
         var from = displayedTotal, start = null;
         function step(ts) {
           if (!start) start = ts;
-          var p = Math.min((ts - start) / 350, 1);
+          var p = Math.min((ts - start) / 600, 1); p = 1 - Math.pow(1 - p, 3);
           var val = Math.round(from + (to - from) * p);
           numEl.textContent = val;
           if (p < 1) { animFrame = requestAnimationFrame(step); } else { displayedTotal = to; animFrame = null; }
@@ -930,6 +1067,93 @@
         return { cls: "fail", stamp: "Rejected", title: "REJECTED.", text: "Re-evaluation fee: your entire personality. You scored " + (cutOff - total) + " below the cut-off of " + cutOff + "." };
       }
 
+
+      // Section scores count up/down over ~600ms with rAF, integers only (Part 1.2).
+      var displayedGroup = GROUPS.map(function () { return 0; });
+      var groupAnims = GROUPS.map(function () { return null; });
+      function animateGroupScore(gi, to, max) {
+        var subEl = groupSubEl[gi], bdEl = bdValEl[gi];
+        if (reduceMotion) { displayedGroup[gi] = to; subEl.textContent = to; bdEl.textContent = to + " / " + max; return; }
+        if (groupAnims[gi]) cancelAnimationFrame(groupAnims[gi]);
+        var from = displayedGroup[gi], start = null;
+        function gstep(ts) {
+          if (!start) start = ts;
+          var p = Math.min((ts - start) / 600, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var val = Math.round(from + (to - from) * eased);
+          subEl.textContent = val;
+          bdEl.textContent = val + " / " + max;
+          if (p < 1) { groupAnims[gi] = requestAnimationFrame(gstep); } else { displayedGroup[gi] = to; groupAnims[gi] = null; }
+        }
+        groupAnims[gi] = requestAnimationFrame(gstep);
+      }
+
+      // Verdict side effects (Part 1.1 + 1.9): thud + vibrate when the stamp lands,
+      // confetti on a pass, falling zeros on a heavy miss. Fired once per verdict change.
+      var lastVerdictKey = "";
+      var slamPending = false;
+      var PAPER_COLORS = ["#f6f2e9", "#e8dfc8", "#e8323f", "#16130e"];
+      function afterStampLand(eff) {
+        if (reduceMotion) return;
+        var verdictEl = document.getElementById("verdict");
+        setTimeout(function () {
+          verdictEl.classList.remove("thud");
+          void verdictEl.offsetWidth;
+          verdictEl.classList.add("thud");
+          if (navigator.vibrate) navigator.vibrate(40);
+        }, 480);
+        if (eff === null) return;
+        if (eff >= cutOff) {
+          if (typeof confetti === "function") {
+            var end = Date.now() + 1500;
+            (function frame() {
+              confetti({ particleCount: 5, angle: 60, spread: 60, startVelocity: 45, origin: { x: 0, y: 0.7 }, colors: PAPER_COLORS, disableForReducedMotion: true });
+              confetti({ particleCount: 5, angle: 120, spread: 60, startVelocity: 45, origin: { x: 1, y: 0.7 }, colors: PAPER_COLORS, disableForReducedMotion: true });
+              if (Date.now() < end) requestAnimationFrame(frame);
+            })();
+          }
+        } else if (eff <= cutOff - 15) {
+          var layer = document.getElementById("zero-layer");
+          if (layer) {
+            layer.innerHTML = "";
+            for (var zi = 0; zi < 10; zi++) {
+              var zs = document.createElement("span");
+              zs.textContent = "0";
+              zs.style.left = (4 + Math.random() * 90) + "%";
+              zs.style.fontSize = (20 + Math.round(Math.random() * 26)) + "px";
+              zs.style.animationDelay = (Math.random() * 0.7) + "s";
+              layer.appendChild(zs);
+            }
+            setTimeout(function () { layer.innerHTML = ""; }, 2800);
+          }
+        }
+      }
+
+      // Verdict pending line with a short typewriter effect (Part 1.8).
+      var typeTimer = null, lastPendingText = "";
+      function pendingLineFor(marked) {
+        if (marked >= 19) return "One left. Don't skip it. No negative marking.";
+        if (marked >= 15) return "Almost there. Do not start negotiating with the numbers now.";
+        if (marked >= 10) return "Halfway. Hydrate, you will need it.";
+        if (marked >= 5) return "Warming up. Mirror is getting suspicious.";
+        if (marked === 0) return "Verdict pending. 20 metrics left. No half-marked love stories, score all 20.";
+        return (20 - marked) + " metrics left. No half-marked love stories, score all 20.";
+      }
+      function typePending(text) {
+        var el = document.getElementById("verdict-text");
+        if (text === lastPendingText) return;
+        lastPendingText = text;
+        if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+        if (reduceMotion) { el.textContent = text; return; }
+        var i = 0;
+        el.textContent = "";
+        typeTimer = setInterval(function () {
+          i += 2;
+          el.textContent = text.slice(0, i);
+          if (i >= text.length) { clearInterval(typeTimer); typeTimer = null; }
+        }, 16);
+      }
+
       var prevGroupScores = GROUPS.map(function () { return 0; });
 
       function update() {
@@ -939,13 +1163,14 @@
         var prog = t.marked === 0 ? "0 of 20 marked. The mirror is waiting." : t.marked === 10 ? "10 of 20 marked. Halfway. Chai break is not allowed." : t.marked === 19 ? "19 of 20 marked. One question left. Don\u2019t leave it, no negative marking... yet." : t.marked === 20 ? "20 of 20 marked. Answer sheet complete." : t.marked + " of 20 marked. " + (20 - t.marked) + " more chances to lower your self-esteem.";
         document.getElementById("sc-marked").innerHTML = prog;
         document.getElementById("mb-meta").textContent = t.marked + " of 20 marked";
+        document.getElementById("mb-cutoff").textContent = cutOff;
         document.getElementById("sheet-total-val").innerHTML = t.marked === 20 ? t.total : "&nbsp;";
         t.perGroup.forEach(function (v, gi) {
           var max = GROUPS[gi].metrics.length * 5;
-          groupSubEl[gi].textContent = v;
+          animateGroupScore(gi, v, max);
+          if (groupBarEl[gi]) groupBarEl[gi].style.width = (max ? Math.round(v / max * 100) : 0) + "%";
           var tailEl = groupSubEl[gi].parentNode.querySelector(".sub-tail");
           if (tailEl) tailEl.textContent = " / " + max + (v === 0 ? " (attempt at least one, beta)" : "");
-          bdValEl[gi].textContent = v + " / " + max;
           if (!reduceMotion && prevGroupScores[gi] !== v) {
             var sub = groupSubEl[gi];
             sub.classList.remove("bump");
@@ -974,8 +1199,11 @@
         var verdict = document.getElementById("verdict");
         var vTitle = document.getElementById("verdict-title");
         var vText = document.getElementById("verdict-text");
-        var oldStamp = verdict.querySelector(".stamp");
-        if (oldStamp) oldStamp.remove();
+        // Stamp slam restarts only when the verdict actually changes (Part 1.1):
+        // remove the stamp, force reflow on re-add, and fire thud / vibrate / effects once.
+        var newKey = ageInvalid ? "age" : (t.marked < 20 ? "pending" : verdictFor(eff).cls + "|" + eff + "|" + cutOff);
+        slamPending = newKey !== lastVerdictKey;
+        if (slamPending) { var oldStamp = verdict.querySelector(".stamp"); if (oldStamp) oldStamp.remove(); lastVerdictKey = newKey; }
         verdict.className = "verdict";
 
         var copyBtn = document.getElementById("btn-copy");
@@ -984,14 +1212,17 @@
           verdict.classList.add("fail");
           vTitle.textContent = "Not eligible.";
           vText.textContent = "Tf you are, a sperm? This form is 18+ only. Rejected before the exam even started, fix the age to continue.";
-          var ageStamp = document.createElement("span");
-          ageStamp.className = "stamp fail";
-          ageStamp.textContent = "Rejected";
-          verdict.appendChild(ageStamp);
+          if (!verdict.querySelector(".stamp")) {
+            var ageStamp = document.createElement("span");
+            ageStamp.className = "stamp fail";
+            ageStamp.textContent = "Rejected";
+            verdict.appendChild(ageStamp);
+            if (slamPending) { afterStampLand(null); slamPending = false; }
+          }
           copyBtn.disabled = true;
         } else if (t.marked < 20) {
           vTitle.textContent = "Verdict pending";
-          vText.textContent = (20 - t.marked) + (20 - t.marked === 1 ? " metric" : " metrics") + " left. No half-marked love stories, score all 20.";
+          typePending(pendingLineFor(t.marked));
           copyBtn.disabled = true;
         } else {
           var v = verdictFor(eff);
@@ -999,10 +1230,17 @@
           verdict.classList.add(v.cls);
           vTitle.textContent = name ? "For " + name + ": " + v.title : v.title;
           vText.textContent = eff + " / 100" + (graceOn ? " (includes 5 grace marks)" : "") + ". " + v.text;
-          var stamp = document.createElement("span");
-          stamp.className = "stamp " + v.cls;
-          stamp.textContent = v.stamp;
-          verdict.appendChild(stamp);
+          if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+          lastPendingText = "";
+          if (!verdict.querySelector(".stamp")) {
+            var stamp = document.createElement("span");
+            stamp.className = "stamp " + v.cls;
+            stamp.textContent = v.stamp;
+            verdict.appendChild(stamp);
+            // Force reflow so the slam animation restarts cleanly, then land the thud.
+            void stamp.offsetWidth;
+            if (slamPending) { afterStampLand(eff); slamPending = false; }
+          }
           copyBtn.disabled = false;
         }
       }
@@ -1080,9 +1318,18 @@
         });
         var text = lines.join("\n");
         function done() { showToast("Copied. Go ahead and ruin someone\u2019s day."); }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
-        } else { fallbackCopy(text); done(); }
+        function copyIt() {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+          } else { fallbackCopy(text); done(); }
+        }
+        // Web Share API first (mobile share sheet), copy as the fallback (Part 2.12).
+        if (navigator.share) {
+          navigator.share({ title: "Minimum Cut-Off to Date Me", text: text }).then(function () {}, function (err) {
+            if (err && err.name === "AbortError") return;
+            copyIt();
+          });
+        } else { copyIt(); }
       });
 
       function fallbackCopy(text) {
@@ -1110,7 +1357,16 @@
         cutOff = parseInt(e.target.value, 10);
         var tt = totals();
         if (tt.marked === 20) scoredOnce = true;
-        if (scoredOnce && cutOff < prevCut) document.getElementById("lowered-note").classList.add("show");
+        // Cut-off reactions (Part 1.6): shake the number above 95; flash it red
+        // when it is lowered after the total has been seen.
+        var coValEl = document.getElementById("cutoff-val");
+        if (cutOff > 95 && !reduceMotion) { coValEl.classList.remove("shake"); void coValEl.offsetWidth; coValEl.classList.add("shake"); }
+        if (scoredOnce && cutOff < prevCut) {
+          document.getElementById("lowered-note").classList.add("show");
+          coValEl.classList.add("flash-red");
+          setTimeout(function () { coValEl.classList.remove("flash-red"); }, 1400);
+        }
+        document.getElementById("mb-cutoff").textContent = cutOff;
         var cr = cutOff < 50 ? "Cut-off " + cutOff + "? Standards are in the basement." : cutOff <= 70 ? "Reasonable. Your mother would approve." : cutOff <= 85 ? "Ambitious. Like fixing a CTC before the interview." : cutOff <= 95 ? "Set by someone who has never been rejected on a dating app." : "You will die alone, but with excellent standards.";
         document.getElementById("co-reaction").textContent = cr;
         document.getElementById("cutoff-val").textContent = cutOff + " / 100";
@@ -1264,6 +1520,63 @@
       });
       if (window.location.hash === "#404" || window.location.pathname.indexOf("404") !== -1) document.getElementById("notfound").classList.add("open");
       document.getElementById("btn-404").addEventListener("click", function () { document.getElementById("notfound").classList.remove("open"); history.replaceState(null, "", window.location.pathname); window.scrollTo({ top: 0 }); });
+
+
+      // Rescan button (Part 1.5): replays the draw-in and sweeps the scan line
+      // top to bottom over the figure for about 2 seconds.
+      var rescanBtn = document.getElementById("btn-rescan");
+      if (rescanBtn && diagramEl) {
+        rescanBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (reduceMotion) return;
+          diagramEl.classList.remove("scanning");
+          void diagramEl.offsetWidth;
+          diagramEl.classList.add("scanning");
+          setTimeout(function () { diagramEl.classList.remove("scanning"); }, 2100);
+        });
+      }
+
+      // Scroll reveal (Part 1.7): metric rows fade and slide up 14px once,
+      // when 15% of the row is visible. Skipped entirely for reduced motion.
+      // Fail-safe: a rootMargin pre-reveals rows near the viewport, and a timed
+      // fallback reveals every remaining row, so the scoring UI is never left
+      // invisible if the observer does not fire (print, full-page capture, etc.).
+      if (!reduceMotion && "IntersectionObserver" in window) {
+        var revealRows = document.querySelectorAll(".metric");
+        var revealObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add("revealed"); revealObs.unobserve(en.target); }
+          });
+        }, { threshold: 0.15, rootMargin: "0px 0px 400px 0px" });
+        revealRows.forEach(function (row) {
+          row.classList.add("reveal-init");
+          revealObs.observe(row);
+        });
+        setTimeout(function () {
+          revealRows.forEach(function (row) { row.classList.add("revealed"); revealObs.unobserve(row); });
+        }, 900);
+      }
+
+      // Credits page (separate view): open via footer link or #credits, close on
+      // the back button or Escape, and return focus to where the user was.
+      var creditsView = document.getElementById("credits-view");
+      var creditsReturn = null;
+      function openCredits() {
+        creditsReturn = document.activeElement;
+        creditsView.classList.add("open");
+        document.getElementById("btn-credits-close").focus();
+        creditsView.scrollTop = 0;
+      }
+      function closeCredits() {
+        creditsView.classList.remove("open");
+        if (window.location.hash === "#credits") history.replaceState(null, "", window.location.pathname);
+        if (creditsReturn) creditsReturn.focus();
+      }
+      var footCredits = document.getElementById("foot-credits");
+      if (footCredits) footCredits.addEventListener("click", function (e) { e.preventDefault(); openCredits(); });
+      document.getElementById("btn-credits-close").addEventListener("click", closeCredits);
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && creditsView.classList.contains("open")) closeCredits(); });
+      if (window.location.hash === "#credits") openCredits();
 
       update();
     </script>
